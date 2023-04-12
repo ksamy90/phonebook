@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
 
   const userExists = (name) => {
     return persons.some((el) => {
@@ -13,6 +14,9 @@ const App = () => {
   const handleNewName = (e) => {
     setNewName(e.target.value);
   };
+  const handlePhoneNumber = (e) => {
+    setPhoneNo(e.target.value);
+  };
   const onSubmitChange = (e) => {
     e.preventDefault();
     if (userExists(newName)) {
@@ -20,8 +24,9 @@ const App = () => {
       setNewName("");
       return;
     }
-    setPersons(persons.concat({ name: newName }));
+    setPersons(persons.concat({ name: newName, phone: phoneNo }));
     setNewName("");
+    setPhoneNo("");
   };
 
   return (
@@ -32,12 +37,19 @@ const App = () => {
           name: <input value={newName} onChange={handleNewName} />
         </div>
         <div>
+          number: <input value={phoneNo} onChange={handlePhoneNumber} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       {persons.map((person) => {
-        return <p key={person.name}>{person.name}</p>;
+        return (
+          <p key={person.name}>
+            {person.name} - {person.phone}
+          </p>
+        );
       })}
     </div>
   );
