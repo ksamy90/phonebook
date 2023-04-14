@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import personServices from "./services/persons";
 import SearchFilter from "./components/SearchFilter";
 import NewPerson from "./components/NewPerson";
 import Persons from "./components/Persons";
@@ -11,8 +12,8 @@ const App = () => {
   const [filterPerson, setFilterPerson] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    personServices.getAll().then((personsData) => {
+      setPersons(personsData);
     });
   }, []);
 
@@ -43,11 +44,23 @@ const App = () => {
       setNewName("");
       return;
     }
-    setPersons(
-      persons.concat({ name: newName, number: phoneNo, id: persons.length + 1 })
-    );
-    setNewName("");
-    setPhoneNo("");
+    const personObject = { name: newName, number: phoneNo };
+    personServices.create(personObject).then((returnedPersons) => {
+      setPersons(persons.concat(returnedPersons));
+      setNewName("");
+      setPhoneNo("");
+    });
+  };
+
+  const deleteUser = (id) => {
+    personServices.deleteUser(id).then((returnedUser) => {
+      setPersons(persons.filter((returnedUser) => returnedUser.id !== id));
+    });
+    console.log(id);
+  };
+
+  const deleteUser2 = (id) => {
+    console.log(`id to be deleted ${id}`);
   };
 
   return (
@@ -63,7 +76,7 @@ const App = () => {
         handlePhoneNumber={handlePhoneNumber}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons deleteUser={deleteUser} filteredPersons={filteredPersons} />
     </div>
   );
 };
