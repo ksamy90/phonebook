@@ -53,14 +53,14 @@ const App = () => {
   };
 
   const deleteUser = (id) => {
-    personServices.deleteUser(id).then((returnedUser) => {
-      setPersons(persons.filter((returnedUser) => returnedUser.id !== id));
-    });
+    if (window.confirm("Do you really want delete user?")) {
+      personServices.deleteUser(id).then(() => {
+        setPersons(persons.filter((returnedUser) => returnedUser.id !== id));
+      });
+    } else {
+      setPersons(persons);
+    }
     console.log(id);
-  };
-
-  const deleteUser2 = (id) => {
-    console.log(`id to be deleted ${id}`);
   };
 
   return (
