@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import personServices from "./services/persons";
 import SearchFilter from "./components/SearchFilter";
 import NewPerson from "./components/NewPerson";
@@ -53,7 +52,8 @@ const App = () => {
   };
 
   const deleteUser = (id) => {
-    if (window.confirm("Do you really want delete user?")) {
+    const user = persons.find((person) => person.id === id);
+    if (window.confirm(`Do you really want delete ${user.name}?`)) {
       personServices.deleteUser(id).then(() => {
         setPersons(persons.filter((returnedUser) => returnedUser.id !== id));
       });
