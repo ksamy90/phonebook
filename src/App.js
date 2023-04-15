@@ -36,11 +36,29 @@ const App = () => {
     setFilterPerson(e.target.value);
   };
 
+  const changeUser = (id, number) => {
+    const person = persons.find((p) => p.id === id);
+    const changedPerson = { ...person, number };
+    personServices.updateUser(id, changedPerson).then(() => {
+      setPersons(persons.map((person) => person.id !== id));
+    });
+  };
+
   const onSubmitChange = (e) => {
     e.preventDefault();
     if (userExists(newName)) {
-      alert(`${newName} already added to phonebook`);
+      alert(`${newName} already added to phonebook, add new number only`);
+      const person = persons.find((p) => p.name === newName);
+      const id = person.id;
+      const changedPerson = { ...person, number: phoneNo };
+      personServices.updateUser(id, changedPerson).then((returnedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : returnedPerson))
+        );
+      });
+      console.log(person);
       setNewName("");
+      setPhoneNo("");
       return;
     }
     const personObject = { name: newName, number: phoneNo };
