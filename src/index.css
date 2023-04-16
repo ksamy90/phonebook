@@ -1,0 +1,18 @@
+.user {
+  padding: 10px;
+  border: 2px solid green;
+  border-radius: 4px;
+  color: green;
+  font-size: 14px;
+  margin-bottom: 20px;
+  background: #e0d9d9;
+}
+
+.message {
+  color: red;
+  padding: 10px;
+  border: 1px solid gray;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background: #d3c5c5;
+}

@@ -3,12 +3,15 @@ import personServices from "./services/persons";
 import SearchFilter from "./components/SearchFilter";
 import NewPerson from "./components/NewPerson";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [filterPerson, setFilterPerson] = useState("");
+  const [addUser, setAddUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personServices.getAll().then((personsData) => {
@@ -51,21 +54,40 @@ const App = () => {
       const person = persons.find((p) => p.name === newName);
       const id = person.id;
       const changedPerson = { ...person, number: phoneNo };
-      personServices.updateUser(id, changedPerson).then((returnedPerson) => {
-        setPersons(
-          persons.map((person) => (person.id !== id ? person : returnedPerson))
-        );
-      });
+      personServices
+        .updateUser(id, changedPerson)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== id ? person : returnedPerson
+            )
+          );
+        })
+        .catch((err) => {
+          setAddUser(null);
+          setErrorMessage(`${person.name} was already removed from server`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
       console.log(person);
+      setAddUser(`Changed ${person.name} number`);
+      setTimeout(() => {
+        setAddUser(null);
+      }, 5000);
       setNewName("");
       setPhoneNo("");
       return;
     }
     const personObject = { name: newName, number: phoneNo };
-    personServices.create(personObject).then((returnedPersons) => {
-      setPersons(persons.concat(returnedPersons));
+    personServices.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
       setNewName("");
       setPhoneNo("");
+      setAddUser(`Added ${returnedPerson.name}`);
+      setTimeout(() => {
+        setAddUser(null);
+      }, 5000);
     });
   };
 
@@ -84,6 +106,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {addUser && <Notification user={addUser} />}
+      {errorMessage && <Notification message={errorMessage} />}
       <SearchFilter filterPerson={filterPerson} handleFilters={handleFilters} />
       <h2>add a new</h2>
       <NewPerson
